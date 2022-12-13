@@ -1,0 +1,54 @@
+#!/bin/python3
+
+import subprocess
+import sys
+
+
+### === DEVICE LIST ===
+d1 = ["08:BF:A0:E5:2F:91", "Samsung Buds Live"]
+d2 = ["B8:69:C2:62:F1:EB", "JBL Flip 3"]
+
+
+
+
+# =====================
+
+
+device_list = [d1, d2]
+
+# =====================
+
+def list_devices():
+    print("### Listing devices")
+    counter = 1
+    for _ in device_list:
+        print(counter, " ~ MAC: " + _[0] + " -> "+ _[1])
+        counter += 1
+    print()
+
+
+def ask_connection():
+    print("Enter the index of the device you want to pair and connect:")
+    while True:
+        try:
+            print()
+            x = input("Enter: ")
+            if x == "exit" or x == "quit":
+                sys.exit(0)
+            elif x == "0":
+                print(subprocess.getoutput("bluetoothctl disconnect"))
+            elif 0 < int(x) and int(x) <= len(device_list):
+                x = int(x)
+                print(subprocess.getoutput("bluetoothctl pair " + device_list[x-1][0]))
+                print(subprocess.getoutput("bluetoothctl connect " + device_list[x-1][0]))
+        except KeyboardInterrupt:
+            print("\nKeyboardInterrupt: Exiting...")
+            sys.exit(0)
+        except Exception:
+            print("\nExiting...")
+            sys.exit(0)
+
+
+if __name__ == "__main__":
+    list_devices()
+    ask_connection()

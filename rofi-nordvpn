@@ -1,0 +1,14 @@
+#!/bin/bash
+
+COUNTRY=$(nordvpn countries | tr "_" "0" | tr -s '[[:punct:][:space:]]' '\n' | tr "0" "_" | grep -E "^[A-Z,a-z,0-9]" | rofi -dmenu -i -no-custom -p "NordVPN Country: ")
+
+COUNTRY_LEN=$(echo $COUNTRY | wc -m)
+
+if [[  $COUNTRY_LEN -lt 4 ]]
+then
+	nordvpn disconnect
+	exit
+else
+	CITY=$(nordvpn cities $COUNTRY | tr "_" "0" | tr -s '[[:punct:][:space:]]' '\n' | tr "0" "_" | grep -E "^[A-Z,a-z,0-9]" | rofi -dmenu -i -no-custom -p "NordVPN City: ")
+	nordvpn connect $COUNTRY $CITY
+fi

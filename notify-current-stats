@@ -1,0 +1,26 @@
+#!/usr/bin/bash
+
+INTERFACE=wlp3s0
+
+DATA="$(date +'%a, %d.%m.%y %H:%M:%S')\n"
+DATA+="------------------------\n"
+DATA+="Kernel: $(uname -r)\n"
+
+WIFI_VAR=$(nmcli -f 'NAME,DEVICE' -t c | grep $INTERFACE | cut -d':' -f1)
+if [[ $(echo $WIFI_VAR | wc -w) -eq 0 ]]; then
+	WIFI_VAR="Disconnected!"
+fi
+DATA+="Wifi: $WIFI_VAR\n"
+
+NORDVPN_VAR=$()
+DATA+="NordVPN: $NORDVPN_VAR\n"
+
+
+
+
+
+
+
+DATA+="------------------------\n"
+
+dunstify -a "current-stats" -i "stats" -r 1111 -t 0 -u low "SYSTEM STATS" "$DATA" 

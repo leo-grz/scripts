@@ -1,0 +1,48 @@
+#!/bin/bash
+
+rem="ubuntu@pi:~/myDocuments/"
+
+if [[ $3 ]]
+then
+	loc="$3"
+else
+	loc="$HOME/Documents/"
+fi
+
+if [ $1 = 'pull' ];
+then
+	if [ $2 = 'test' ];
+  	then
+    		echo "===> pull from pi >> TEST (--dry-run, --delete)"
+    		rsync -e 'ssh -p 6740' -zav --delete --dry-run $rem $loc
+  	elif [ $2 = 'soft' ];
+	then
+    		echo "===> pull from pi >> SOFT"
+    		rsync -e 'ssh -p 6740' -zav $rem $loc
+  	elif [ $2 = 'hard' ];
+  	then
+    		echo "===> pull from pi >> HARD: --delete"
+    		rsync -e 'ssh -p 6740'-zav --delete $rem $loc
+  	else
+    		echo "$(whoami) - $0 pull <test/soft/hard>"
+  	fi
+elif [ $1 = 'push' ];
+then
+  	if [ $2 = 'test' ];
+  	then
+    		echo "===> push to pi >> TEST (--dry-run, --delete)"
+    		rsync -e 'ssh -p 6740' -zav --delete --dry-run $loc $rem
+  	elif [ $2 = 'soft' ];
+  	then
+  		echo "===> push to pi >> SOFT"
+    		rsync -e 'ssh -p 6740' -zav $loc $rem
+  	elif [ $2 = 'hard' ];
+  	then
+    		echo "===> push to pi >> HARD: --delete"
+    		rsync -e 'ssh -p 6740' -zav --delete $loc $rem
+  	else
+    		echo "$(whoami) - $0 push <test/soft/hard>"
+  	fi
+else
+    echo "--> $(whoami) - $0 <push/pull> <test/soft/hard>"
+fi

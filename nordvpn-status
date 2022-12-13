@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+
+full_status=$(nordvpn status | awk -F":_" '/Status|Country|City|Server IP/{gsub(/ /, "_");printf "%s ", $2};')
+	
+echo "$full_status" | awk '{if(match($0, /Disconnected/)){print "inactive"}else{print $3" ["$2"]"}}'

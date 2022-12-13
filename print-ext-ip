@@ -1,0 +1,12 @@
+#!/usr/bin/sh
+
+ping -W 3 -c 1 ifconfig.me &>/dev/null
+
+if [[ $? != 0 ]]; then
+	echo "No Address"
+	exit
+else
+	IP_ADDR=$(curl --silent ifconfig.me | grep -E -o "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}")
+	echo $IP_ADDR
+fi
+

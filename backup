@@ -1,0 +1,15 @@
+#!/bin/bash
+
+PATH_TO_SD=$HOME/32GB-SD
+PATH_TO_SAVE=$HOME/Documents
+
+if [[ -d $PATH_TO_SD ]]
+then
+	rsync -zav $PATH_TO_SAVE/ $PATH_TO_SD/Documents/
+	for var in $H/.waterfox $H/.vim $H/.ssh $H/.thunderbird $H/.atom $H/.config $H/.mozilla
+	do
+		rsync  -zav $var $PATH_TO_SD/dot_folders/
+	done
+else
+	echo "[ERROR] No such device: $PATH_TO_SD"
+fi

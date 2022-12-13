@@ -1,0 +1,53 @@
+#!/usr/bin/bash
+
+INTERFACE=wlp3s0
+
+connect_to_wifi () {
+	SELECTED_WIFI=$(nmcli -w 3 -t -f "SSID" device wifi list | rofi -dmenu -i -window-title "Select a Network:")
+
+
+	if [[ $(echo $SELECTED_WIFI | wc -c) -lt 4 ]]
+	then
+		exit
+	else 
+		PASSWORD=$(rofi -dmenu -password -p "Enter password: ")
+		nmcli device wifi connect "$SELECTED_WIFI" password "$PASSWORD" 
+	fi
+	
+	if [[ $(nmcli -t -f "NAME,DEVICE" c | grep $INTERFACE | cut -d":" -f1) = $SELECTED_WIFI ]]
+	then 
+		dunstify -a "rofi-wifi" -i "wifi_connected" -u low "CONNECTION ESTABLISHED" "SSID: '$SELECTED_WIFI'" ""
+	else
+		dunstify -a "rofi-wifi" -i "wifi_enforced" -u normal "CONNECTION FAILED" "SSID: '$SELECTED_WIFI'"
+	fi
+
+	exit
+}
+
+disconnect () {
+	nmcli connection down id "$1"	
+	dunstify -a "rofi-wifi" -i "wifi_disconnected" -u normal "WIFI DISCONNECTED" "SSID: '$1'"
+	exit
+}
+
+main () {
+	CURRENT_CONNECTION=$(nmcli -t -f "DEVICE,CONNECTION" d | grep $INTERFACE | cut -d":" -f2)
+
+	if [[ $(echo "$CURRENT_CONNECTION" | wc -w) -eq 0 ]]
+	then
+		connect_to_wifi
+	fi
+
+	OPTION=$(echo -e "Disconnect '$CURRENT_CONNECTION'\nList other WIFI's" | rofi -dmenu -i -window-title "Connected to '$CURRENT_CONNECTION'")
+
+	if [[ $OPTION = "Disconnect '$CURRENT_CONNECTION'" ]]
+	then
+		disconnect "$CURRENT_CONNECTION"
+	elif [[ $OPTION = "List other WIFI's" ]]
+	then 
+		connect_to_wifi
+	fi
+}
+
+
+main

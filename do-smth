@@ -1,0 +1,2 @@
+#!/usr/bin/sh
+dunstify "SCRIPT EXECUTED!" "script: $(echo $0)" -u critical

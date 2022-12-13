@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+
+# jobs | grep -E -o "^\[[0-9]" | grep -E -o "[0-9]"
+#
+#
+
+sudo $1
+
+bg %1
+disown %1

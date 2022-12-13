@@ -1,0 +1,3 @@
+#!/usr/bin/sh
+
+i3lock --ignore-empty-password --show-failed-attempts --image=$HOME/Pictures/wallpapers2/white_connected_dots.png

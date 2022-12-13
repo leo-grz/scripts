@@ -1,0 +1,10 @@
+#!/usr/bin/sh
+
+if [[ $1 == "" ]]; then
+	echo "N/A"
+	exit
+fi
+
+STATUS="$(systemctl is-active $1)"
+
+echo "$STATUS"

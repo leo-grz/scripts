@@ -1,0 +1,6 @@
+echo -e "\n\t#####| YAY |#####\n"
+yay -Ssq $1
+echo -e "\n\n\n\t#####| SNAP |#####\n"
+snap find $1
+echo -e "\n\n\n\t#####| FLATPAK |#####\n"
+flatpak search $1
