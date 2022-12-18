@@ -1,0 +1,13 @@
+#!/usr/bin/sh
+
+if [ $# -eq 3 ];
+then
+	
+	convert $1 -resize 1920x1080 $2 -resize 1280x720 -geometry +20+20 -composite $3
+elif [ $# -eq 4 ];
+then	
+	convert $1 -resize $4 $2 -resize $4 -geometry +20+20 -composite $3
+else
+	echo "Merge two pictures into one by overlaying. Usecase: Mindmap and picture as desktop background."
+	echo "Usage: $0 <pic1> <pic2 with transparent bg> <result> <resolution (optional) default=1920x1080>"
+fi
