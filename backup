@@ -1,15 +1,40 @@
 #!/bin/bash
 
-PATH_TO_SD=$HOME/32GB-SD
-PATH_TO_SAVE=$HOME/Documents
+# for use on RaspberryPi
 
-if [[ -d $PATH_TO_SD ]]
-then
-	rsync -zav $PATH_TO_SAVE/ $PATH_TO_SD/Documents/
-	for var in $H/.waterfox $H/.vim $H/.ssh $H/.thunderbird $H/.atom $H/.config $H/.mozilla
-	do
-		rsync  -zav $var $PATH_TO_SD/dot_folders/
-	done
-else
-	echo "[ERROR] No such device: $PATH_TO_SD"
+# Variables
+RING=1 # Set to 1 to enable ring buffer functionality
+RING_BUFFER_SIZE=16 # (= 2 months, 2 per week) The number of backups to keep in the ring buffer
+
+MOUNT=1 # Set to 1 to mount and unmount the backup device
+BACKUP_DEVICE="/dev/sda" # The backup device (e.g. a USB stick)
+BACKUP_MNT="/home/ubuntu/STICK"
+
+BACKUP_FOLDER="/home/ubuntu/Sync" # The folder to be backed up
+BACKUP_FILE="backup-$(date +'%d-%m-%y').tar" # The name of the backup file
+
+# Mount the backup device if MOUNT variable is set
+if [ $MOUNT -eq 1 ]; then
+    mount $BACKUP_DEVICE $BACKUP_MNT
+fi
+
+# Create the backup
+tar -cvf $BACKUP_MNT/$BACKUP_FILE $BACKUP_FOLDER
+
+# Check if RING buffer is enabled
+if [ $RING -eq 1 ]; then
+    # Get the number of backups on the device
+    num_backups=$(ls $BACKUP_MNT | grep "backup" | wc -l)
+
+    # Check if the number of backups exceeds the ring buffer size
+    if [ $num_backups -gt $RING_BUFFER_SIZE ]; then
+        # Delete the oldest backup
+        oldest_backup=$(ls -t $BACKUP_MNT | grep "backup" | tail -1)
+        rm $BACKUP_MNT/$oldest_backup
+    fi
+fi
+
+# Unmount the backup device if MOUNT variable is set
+if [ $MOUNT -eq 1 ]; then
+    umount $BACKUP_DEVICE
 fi
